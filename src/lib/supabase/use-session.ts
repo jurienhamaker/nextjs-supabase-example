@@ -9,16 +9,11 @@ export default function useSession() {
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_, session) => setSession(session));
 
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      setSession(session);
-    };
-
-    getSession();
+    return () => subscription.unsubscribe();
   }, []);
 
   return session;
